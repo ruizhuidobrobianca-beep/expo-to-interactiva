@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Expo TO Interactiva</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#f8f3ff,#fff6fb);color:#29233a}
+main{max-width:760px;margin:auto;padding:18px 15px 45px}.screen{display:none}.screen.active{display:block}
+.hero{text-align:center;padding:35px 8px 20px}.logo{font-size:52px}.tag{display:inline-block;background:#eee4ff;color:#7651bd;padding:8px 13px;border-radius:99px;font-weight:700;font-size:13px}
+h1{font-size:clamp(32px,8vw,56px);line-height:1.03;margin:13px 0 10px}h2{font-size:30px;margin:10px 0}h3{margin:8px 0}.sub{font-size:18px;line-height:1.5}
+.card{background:#fff;border:1px solid #eadff7;border-radius:22px;padding:20px;margin:15px 0;box-shadow:0 7px 25px rgba(70,35,100,.08)}
+button{appearance:none;border:0;border-radius:15px;padding:14px 17px;font-size:16px;font-weight:700;background:#8d62d9;color:#fff;cursor:pointer;touch-action:manipulation;width:auto}
+button.secondary{background:#eee8f7;color:#29233a}button.pink{background:#e78bc2}
+.full{width:100%;margin-top:8px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.choice{background:#faf7ff;color:#29233a;border:2px solid #eadff7;width:100%;min-height:68px}.choice:active{transform:scale(.98)}
+.wheel-wrap{text-align:center}.arrow{font-size:28px;margin-top:8px}.wheel{width:205px;height:205px;margin:0 auto 18px;border-radius:50%;border:10px solid #fff;box-shadow:0 8px 24px #0002;background:conic-gradient(#8d62d9 0 16.66%,#e78bc2 16.66% 33.32%,#f3bd69 33.32% 49.98%,#78b6d6 49.98% 66.64%,#86c69c 66.64% 83.3%,#aa91df 83.3% 100%);display:flex;align-items:center;justify-content:center;transition:transform 1.1s cubic-bezier(.15,.8,.2,1)}
+.wheel span{background:#fff;border-radius:50%;padding:20px;font-weight:800}.case{background:#faf7ff;border-left:5px solid #8d62d9;padding:15px;border-radius:12px;line-height:1.5}
+textarea{width:100%;min-height:105px;border:2px solid #e7dff1;border-radius:14px;padding:13px;font:inherit;margin-top:10px}.small{font-size:14px;line-height:1.45;opacity:.8}.result{text-align:center}.resultname{font-size:24px;font-weight:800;color:#7651bd}.pill{display:inline-block;background:#f1eaff;padding:8px 11px;border-radius:99px}.progress{height:8px;background:#e9e0f3;border-radius:99px;overflow:hidden;margin:15px 0}.bar{height:100%;width:0;background:#8d62d9;transition:width .25s}
+footer{text-align:center;font-size:13px;opacity:.6;margin-top:30px}@media(max-width:520px){.grid{grid-template-columns:1fr}button:not(.choice){width:100%;margin-top:7px}}
+</style>
+</head>
+<body>
+<main>
+
+<section id="home" class="screen active">
+<div class="hero">
+<div class="logo">🧠🤲</div><span class="tag">EXPO TO · EXPERIENCIA INTERACTIVA</span>
+<h1>¿TENÉS LO QUE SE NECESITA PARA SER TO?</h1>
+<p class="sub">Tres desafíos. Una misión. Descubrí una parte de lo que hacemos en Terapia Ocupacional.</p>
+<button type="button" class="full" onclick="go('wheel')">🚀 COMENZAR</button>
+</div>
+<div class="card"><b>¿Cómo funciona?</b><p>🎡 Girá la ruleta → 🤖 resolvé un desafío → 🧠 descubrí tu perfil TO.</p></div>
+</section>
+
+<section id="wheel" class="screen">
+<span class="tag">DESAFÍO 1 · RULETA</span><h2>🎡 La ruleta de las ocupaciones</h2><p>Girá y descubrí qué desafío te toca.</p>
+<div class="wheel-wrap"><div class="arrow">▼</div><div class="wheel" id="wheel"><span id="wheelText">GIRAR</span></div></div>
+<div id="wheelResult" class="card" hidden></div>
+<button type="button" id="spin" class="full" onclick="spin()">🎡 GIRAR RULETA</button>
+<button type="button" class="secondary full" onclick="go('ai')">🤖 Siguiente desafío</button>
+</section>
+
+<section id="ai" class="screen">
+<span class="tag">DESAFÍO 2 · IA</span><h2>🤖 Pensá como TO</h2>
+<p>Elegí una ocupación y resolvé el caso. No hay una única respuesta correcta.</p>
+<div class="grid">
+<button type="button" class="choice" onclick="caseFor('🍳 Cocinar')">🍳 Cocinar</button>
+<button type="button" class="choice" onclick="caseFor('📚 Estudiar')">📚 Estudiar</button>
+<button type="button" class="choice" onclick="caseFor('🎮 Jugar')">🎮 Jugar</button>
+<button type="button" class="choice" onclick="caseFor('👕 Vestirse')">👕 Vestirse</button>
+<button type="button" class="choice" onclick="caseFor('📱 Usar tecnología')">📱 Usar tecnología</button>
+<button type="button" class="choice" onclick="caseFor('🏃 Hacer deporte')">🏃 Hacer deporte</button>
+</div>
+<div id="caseBox"></div>
+</section>
+
+<section id="test" class="screen">
+<span class="tag">DESAFÍO 3 · TEST</span><h2>🧠 ¿Qué perfil TO tenés?</h2>
+<div class="progress"><div class="bar" id="bar"></div></div><div id="questionBox"></div>
+</section>
+
+<section id="result" class="screen">
+<span class="tag">RESULTADO</span>
+<div class="card result"><div id="resultEmoji" style="font-size:55px"></div><h2>Tu perfil es...</h2><div id="resultName" class="resultname"></div><p id="resultText"></p><span id="power" class="pill"></span></div>
+<div class="card"><h3>💡 ¿Qué tiene que ver con TO?</h3><p>La Terapia Ocupacional busca favorecer la participación y autonomía en actividades significativas, teniendo en cuenta a la persona, sus necesidades y su contexto.</p></div>
+<div class="card"><h3>🎓 ¿Te dio curiosidad?</h3><p>Acercate al stand y preguntanos lo que quieras sobre la carrera.</p></div>
+<button type="button" class="pink full" onclick="restart()">🔄 Hacer de nuevo</button>
+</section>
+
+<footer>Expo de Terapia Ocupacional · 2026</footer>
+</main>
+
+<script>
+(function(){
+"use strict";
+const profiles=[
+{name:"TO CREATIVO/A",emoji:"🎨",text:"Te gusta imaginar alternativas y encontrar formas diferentes de resolver situaciones. En TO, la creatividad puede aparecer al adaptar actividades, objetos y entornos.",power:"Tu superpoder: pensar fuera de la caja"},
+{name:"TO ESTRATEGA",emoji:"🧠",text:"Te gusta observar, analizar y descubrir qué está pasando antes de buscar una solución. Ese razonamiento es muy importante en Terapia Ocupacional.",power:"Tu superpoder: encontrar el problema"},
+{name:"TO SOCIAL",emoji:"🤝",text:"Te interesa escuchar, acompañar y trabajar con otras personas. En TO, la persona y sus objetivos ocupacionales están en el centro.",power:"Tu superpoder: trabajar en equipo"},
+{name:"TO DEL MOVIMIENTO",emoji:"🏃",text:"Te atraen los desafíos prácticos, la acción y el movimiento. En distintos contextos de TO pueden trabajarse habilidades motoras y participación.",power:"Tu superpoder: pasar a la acción"},
+{name:"TO INNOVADOR/A",emoji:"💻",text:"Te llaman la atención la tecnología y las nuevas herramientas. En TO pueden utilizarse tecnologías y dispositivos de asistencia para favorecer autonomía y participación.",power:"Tu superpoder: imaginar el futuro"}
+];
+const qs=[
+["Te dan un desafío difícil. ¿Qué hacés?",["Busco una manera diferente de hacerlo.","Analizo el problema paso a paso.","Le pregunto a alguien qué necesita.","Pruebo distintas formas de hacerlo.","Busco una herramienta o tecnología que ayude."]],
+["¿Qué actividad elegirías?",["Crear o diseñar algo.","Resolver un acertijo.","Trabajar en equipo.","Hacer un desafío de movimiento.","Probar una tecnología nueva."]],
+["Alguien tiene dificultades con una actividad. Primero...",["Pienso cómo adaptarla creativamente.","Intento descubrir dónde está la dificultad.","Le pregunto qué necesita y qué quiere lograr.","Observo qué movimientos requiere.","Pienso si una herramienta puede facilitarla."]],
+["¿Qué te gustaría inventar?",["Una adaptación original.","Una solución para un problema.","Una actividad para un grupo.","Un juego de movimiento.","Una herramienta tecnológica."]],
+["Elegí una frase.",["Siempre se puede encontrar otra forma.","Primero quiero entender el problema.","Lo importante es hacerlo juntos.","¡Probemos y veamos!","Seguro existe una tecnología para esto."]],
+["¿Qué te gustaría que tenga tu futura profesión?",["Creatividad.","Desafíos mentales.","Contacto con personas.","Actividad y movimiento.","Tecnología e innovación."]]
+];
+let qi=0,scores=[0,0,0,0,0],spun=false;
+
+window.go=function(id){
+document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+const el=document.getElementById(id); if(el) el.classList.add("active");
+window.scrollTo(0,0);
+if(id==="test") renderQ();
+};
+window.spin=function(){
+if(spun)return; spun=true;
+const cats=[
+["🧠 MEMORIA","Recordá 6 imágenes durante 10 segundos y después nombrá todas las que puedas."],
+["👀 PERCEPCIÓN","Encontrá 5 diferencias entre dos imágenes en menos de 30 segundos."],
+["✋ DESTREZA","Trasladá 5 objetos de un recipiente a otro usando una sola mano."],
+["🎨 CREATIVIDAD","Inventá en 30 segundos una adaptación para facilitar el agarre de un lápiz."],
+["📱 TECNOLOGÍA","Elegí una función de accesibilidad del celular que pueda facilitar una actividad cotidiana."],
+["🏠 VIDA DIARIA","Ordená las acciones necesarias para realizar una actividad cotidiana, como preparar un mate."]
+];
+const i=Math.floor(Math.random()*cats.length),w=document.getElementById("wheel");
+w.style.transform="rotate("+(720+i*60)+"deg)";
+setTimeout(()=>{
+document.getElementById("wheelText").textContent=cats[i][0];
+const box=document.getElementById("wheelResult");box.hidden=false;
+box.innerHTML="<h3>"+cats[i][0]+"</h3><p>"+cats[i][1]+"</p><p class='small'><b>Conexión TO:</b> las habilidades que usamos para realizar actividades cotidianas pueden influir en nuestra participación y autonomía.</p>";
+document.getElementById("spin").textContent="✅ DESAFÍO OBTENIDO";
+},1150);
+};
+window.caseFor=function(occ){
+const c={
+"🍳 Cocinar":"Una persona quiere preparar su comida, pero tiene dificultades para agarrar algunos utensilios. ¿Qué podrías cambiar de la actividad, del objeto o del entorno?",
+"📚 Estudiar":"Una estudiante se distrae mucho y le cuesta organizar sus tareas. ¿Qué cambios en la actividad o en el entorno podrían ayudarla?",
+"🎮 Jugar":"Una persona quiere jugar a su videojuego favorito, pero le cuesta utilizar el control. ¿Qué adaptación o estrategia podrías pensar?",
+"👕 Vestirse":"Una persona tiene dificultades para abrochar botones. ¿Qué alternativa podría facilitar la actividad sin dejar de favorecer su autonomía?",
+"📱 Usar tecnología":"Una persona tiene dificultades para utilizar la pantalla táctil. ¿Qué función de accesibilidad o adaptación podría ayudar?",
+"🏃 Hacer deporte":"Una persona quiere participar en un deporte, pero una parte de la actividad le resulta difícil. ¿Cómo podrías modificar la actividad para facilitar su participación?"
+}[occ];
+document.getElementById("caseBox").innerHTML="<div class='card'><div class='case'><b>"+occ+"</b><p>"+c+"</p></div><textarea id='idea' placeholder='Escribí tu idea...'></textarea><button type='button' class='full' onclick='showAI()'>🤖 Ver qué podría sugerir la IA</button><div id='aiReply'></div></div>";
+};
+window.showAI=function(){
+const reply=document.getElementById("aiReply");
+reply.innerHTML="<div class='case'><b>🤖 IA:</b><p>Podría haber distintas soluciones: adaptar el objeto, modificar la forma de realizar la actividad, cambiar el entorno o incorporar una herramienta de apoyo.</p><p><b>Pero ojo:</b> una IA puede generar ideas; un/a terapeuta ocupacional necesita evaluar a la persona, sus objetivos, capacidades, preferencias y contexto antes de decidir qué estrategia es adecuada.</p></div><button type='button' class='pink full' onclick='go(\"test\")'>🧠 DESCUBRIR MI PERFIL TO</button>";
+};
+function renderQ(){
+const q=qs[qi];document.getElementById("bar").style.width=(qi/qs.length*100)+"%";
+let buttons=q[1].map((x,i)=>"<button type='button' class='choice' onclick='answer("+i+")'>"+x+"</button>").join("");
+document.getElementById("questionBox").innerHTML="<div class='card'><h3>"+(qi+1)+". "+q[0]+"</h3><div class='grid'>"+buttons+"</div></div>";
+}
+window.answer=function(i){
+scores[i]++;qi++;
+if(qi<qs.length)renderQ();else finish();
+};
+function finish(){
+const max=Math.max.apply(null,scores),i=scores.indexOf(max),p=profiles[i];
+document.getElementById("resultEmoji").textContent=p.emoji;
+document.getElementById("resultName").textContent=p.name;
+document.getElementById("resultText").textContent=p.text;
+document.getElementById("power").textContent=p.power;
+document.getElementById("bar").style.width="100%";go("result");
+}
+window.restart=function(){qi=0;scores=[0,0,0,0,0];spun=false;document.getElementById("wheel").style.transform="rotate(0deg)";document.getElementById("wheelText").textContent="GIRAR";document.getElementById("wheelResult").hidden=true;document.getElementById("spin").textContent="🎡 GIRAR RULETA";document.getElementById("caseBox").innerHTML="";go("home");};
+})();
+</script>
+</body>
+</html>
